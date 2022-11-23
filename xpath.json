@@ -1,0 +1,5 @@
+{
+    "address_box": "//*[@id='identifierId']",
+    "next_button": "//*[@id='identifierNext']/div/button/span",
+    "password_box": "//*[@id='password']/div[1]/div/div[1]/input" 
+}
