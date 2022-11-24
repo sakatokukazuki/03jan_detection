@@ -13,14 +13,18 @@ class JanDetection():
 
     # 画像を自分の牌だけトリミング
     def cut(self):
-        self.im = cv2.imread(f'{self.PATH}/data/data1.png')
-        self.im_crop = self.im[900 : 1020,380 : 1450]
+        self.im = cv2.imread(f'{self.PATH}/data/data6.png')
+        self.im_crop = self.im[850 : 1020,380 : 1450]
 
     # テンプレートマッチング
     def matching(self):
 
         # 画像の読み込み + グレースケール化
         img_gray = cv2.cvtColor(self.im_crop, cv2.COLOR_BGR2GRAY)
+
+        self.loc_list = []
+
+        # 白以外の牌をマッチング
         for hai_name in self.hai_list:
             template = cv2.imread(f'{self.PATH}/tiles_images/{hai_name}.png')
             template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
@@ -29,9 +33,19 @@ class JanDetection():
             res = cv2.matchTemplate(img_gray, template_gray, cv2.TM_CCOEFF_NORMED)
 
             # 類似度の高い部分を検出する
-            threshold = 0.9
+            # 9筒,9索は閾値下げる
+            if hai_name == "pin9" or hai_name == "so9":
+                threshold = 0.955
+            
+            # 白は閾値上げる
+            elif hai_name == "haku":
+                threshold = 0.99
+
+            else:
+                threshold = 0.98
+
             loc = np.where(res >= threshold)
-            print(len(loc[0]))
+            self.loc_list.append(len(loc[0]))
 
             # テンプレートマッチング画像の高さ、幅を取得する
             h, w = template_gray.shape
@@ -39,12 +53,16 @@ class JanDetection():
             for pt in zip(*loc[::-1]):
                 cv2.rectangle(self.im_crop, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
 
-            # 画像の保存
+            # 画像の保存(確認用)
             cv2.imwrite('./tpl_match_after.png', self.im_crop)
 
+    def kokushi(self):
+        roto = self.loc_list.count(0)
+        print(f"{(13-roto)*100/13}%")
 
 if __name__ == "__main__":
 
     jan_detection = JanDetection()
     jan_detection.cut()        
     jan_detection.matching()
+    jan_detection.kokushi()
