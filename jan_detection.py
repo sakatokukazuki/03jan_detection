@@ -13,10 +13,10 @@ class JanDetection():
 
     # 画像を自分の牌だけトリミング
     def cut(self):
-        self.im = cv2.imread(f'{self.PATH}/data/data6.png')
+        self.im = cv2.imread(f'{self.PATH}/data/data4.png')
         self.im_crop = self.im[850 : 1020,380 : 1450]
 
-    # テンプレートマッチング
+    # テンプレートマッチン
     def matching(self):
 
         # 画像の読み込み + グレースケール化
@@ -44,21 +44,25 @@ class JanDetection():
             else:
                 threshold = 0.98
 
-            loc = np.where(res >= threshold)
-            self.loc_list.append(len(loc[0]))
+            self.loc = np.where(res >= threshold)
+            self.loc_list.append(len(self.loc[0]))
 
             # テンプレートマッチング画像の高さ、幅を取得する
             h, w = template_gray.shape
             # 検出した部分に赤枠をつける
-            for pt in zip(*loc[::-1]):
+            for pt in zip(*self.loc[::-1]):
                 cv2.rectangle(self.im_crop, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-
             # 画像の保存(確認用)
             cv2.imwrite('./tpl_match_after.png', self.im_crop)
-
+        print(self.loc_list)
     def kokushi(self):
-        roto = self.loc_list.count(0)
-        print(f"{(13-roto)*100/13}%")
+        yao = self.loc_list.count(0)
+        if yao == 0:
+            print("tsumo")
+
+        else:
+            print(f"あと{yao}枚")
+
 
 if __name__ == "__main__":
 

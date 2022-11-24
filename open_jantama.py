@@ -6,12 +6,12 @@ from time import sleep
 import json
 import os
 
+
 PATH = os.path.dirname(os.path.abspath(__file__))
 
-#screen_shot = pyautogui.screenshot() 
-#screen_shot.save('test.png')
 
-class GetData():
+
+class OpenJantama():
     # 雀魂へ
     def __init__(self, xpath_list):
         options = Options()
@@ -47,6 +47,14 @@ class GetData():
         pyautogui.moveTo(1000, 770)
         pyautogui.click()
 
+    def _open_match(self):
+        self._click_position(1550, 300, duration=13)
+        self._click_position(1500, 800, duration=2)
+
+    def _click_position(self, x, y, duration=0):
+        pyautogui.moveTo(x, y, duration)
+        pyautogui.click()
+
     def _send_keys(self, xpath, text, interval=0):
         output = self.driver.find_element(By.XPATH, xpath)
         output.send_keys(text)
@@ -57,6 +65,7 @@ class GetData():
         button.click()
         sleep(interval)
 
+
 if __name__ == "__main__":
 
     with open(f'{PATH}/secret.json', 'r') as f:
@@ -66,5 +75,5 @@ if __name__ == "__main__":
     with open(f'{PATH}/xpath.json', 'r') as f:
         xpath_list = json.load(f)
 
-    get_data = GetData(xpath_list)
-    get_data._login_jantama(user_data["mail_address"], user_data["password"])
+    openjantama = OpenJantama(xpath_list)
+    openjantama._login_jantama(user_data["mail_address"], user_data["password"])
