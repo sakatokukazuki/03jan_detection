@@ -1,6 +1,8 @@
 from pynput import mouse #module pynputをインポート
 import pyautogui #module pyautoguiをインポート 
-
+import win32gui
+import win32.lib.win32con as win32con
+from time import sleep
 #マウスイベントハンドラを定義
 def on_move(x, y):
     return
@@ -12,7 +14,12 @@ def on_click(x, y, button, pressed):
 
 def on_scroll(x, y, dx, dy):
     return
+def _screenshot():
+        jantama = win32gui.FindWindow(None,'jantama')
+        win32gui.SetForegroundWindow(jantama)
+        win32gui.ShowWindow(jantama, win32con.SW_MAXIMIZE)
 
+_screenshot()
 #リスナー起動
 #Collect events until released
 with mouse.Listener(
